@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="output.css">
+    <link rel="stylesheet" href="src/output.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add" />
     <title>Todo List</title>
 </head>
 <body>
     <div class="w-full h-screen">
-        <div class="w-[600px] h-[600px] ml-auto mr-auto border-rose-300 mt-5" 
+        <div class="flex flex-col justify-between w-[600px] h-[600px] ml-auto mr-auto border-rose-300 mt-5" 
         x-data="{
             tasks: [],
             newTask: '',
@@ -34,43 +34,51 @@
                 return this.tasks;
             }
         }">
-            
-            <!-- Tạo select box -->
-            <div class="flex justify-end">
-                <select x-model="filter">
-                    <option value="all">All</option>
-                    <option value="complete">Complete</option>
-                    <option value="not complete">Not Complete</option>
-                </select>
-            </div>
-            
-            <!-- Danh sách các tasks -->
             <div>
-                <h2 class="font-bold">Todo Task:</h2>
-                <ul>
-                    <template x-for="(task,index) in filterTask()" :key="task.text">
-                        <li>
-                            <input type="checkbox" :checked="task.done" @change="task.done = !task.done">
-                            <span x-text="task.text" :class="{'line-through' : task.done}"></span>
-                            <button @click="tasks.splice(index,1)">Remove.</button>
-                        </li>
-                    </template>
-                </ul>
+                <div class="flex justify-between">
+                    <!-- Tổng kết: tasks đã làm, chưa làm -->
+                    <div class="flex pt-5">
+                        <p class="font-bold mr-2">To dos: <span x-text="tasks.filter(task => !task.done).length"></span></p>
+                        <p class="mr-2">|</p>
+                        <p class="font-bold">Completed: <span x-text="tasks.filter(task => task.done).length"></span></p>
+                    </div>
+                    <!-- Tạo select box -->
+                    <div>
+                        <select class="font-bold mt-5" x-model="filter">
+                            <option value="all">All</option>
+                            <option value="complete">Complete</option>
+                            <option value="not complete">Not Complete</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Hiện thông báo khi đã hoàn thành toàn bộ task! -->
+                <div x-show="allTaskDone()">
+                    <p class="font-bold mt-4">Congrats you finished your list!</p>
+                </div>
+                
+                
+                <!-- Danh sách các tasks -->
+                <div class="mt-4 ">
+                    <h2 class="font-bold mb-3">Todo Task:</h2>
+                    <ul class="pl-5">
+                        <template x-for="(task,index) in filterTask()" :key="task.text">
+                            <li class="bg-slate-200 mb-3 flex justify-between h-7">
+                                <div class="pl-3">
+                                    <input class="mr-2" type="checkbox" :checked="task.done" @change="task.done = !task.done">
+                                    <span class="font-semibold" x-text="task.text" :class="{'line-through' : task.done}"></span>
+                                </div>
+                                <button class="font-light text-sm mr-2" @click="tasks.splice(index,1)">Remove.</button>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
             </div>
-            <!-- Tổng kết: tasks đã làm, chưa làm, còn lại -->
-            <div>
-            <p class="font-bold">To dos: <span x-text="tasks.filter(task => !task.done).length"></span></p>
-            <p class="font-bold">Completed: <span x-text="tasks.filter(task => task.done).length"></span></p>
-            </div>
-            <!-- Hiện thông báo khi đã hoàn thành toàn bộ task! -->
-            <div x-show="allTaskDone()">
-                <p><strong>Congrats you finished your list!</strong></p>
-            </div>
+            
             <!-- Button và nhập task -->
-            <div class="mt-2">
-                <input type="text" placeholder="Add to do item" 
+            <div class="mb-2">
+                <input class="w-5/6 border-4 align-middle p-2" type="text" placeholder="Add to do item" 
                 class="p-1 mr-10" x-model="newTask">
-                <button @click="addTask">
+                <button class="align-middle rounded py-2" @click="addTask">
                     <span class="material-symbols-outlined">
                     add
                     </span>
